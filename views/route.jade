@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  
+  div.container(style="width: auto;")
+
+    div.page-header
+      h1= title
+
+    div.row
+      div.col-sm-4
+        div.panel.panel-default
+          div.panel-heading
+            h2.panel-title Average Flight Time
+          div.panel-body #{timeDist.airTime} minutes
+
+      div.col-sm-4
+        div.panel.panel-default
+          div.panel-heading
+            h2.panel-title Average Distance
+          div.panel-body #{timeDist.distance} miles
