@@ -41,9 +41,8 @@ airline_desc.post('/', function(req, res) {
 
 /* GET airline page AFTER user's choice */
 airline_desc.get('/:id', function(req, res) {
-	orig = req.params.id.substring(0, 3)
-	dest = req.params.id.substring(4, 7)
-	connection.query(mysql.format(sql.selectStats, [orig, dest, orig, dest]), function(err, results) {
+	airlineID = req.params.id
+	connection.query(mysql.format(sql.selectStats, [airlineID, airlineID, airlineID]), function(err, results) {
 		console.log(results[0])
 		console.log(results[2])
 		timeDist = results[0]
