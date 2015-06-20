@@ -5,7 +5,22 @@ var router = express.Router()
 
 var sql = {
 
-	'selectRoutes': 'SELECT DISTINCT A1.airportCode AS orig, A2.airportCode AS dest FROM route R, airport A1, airport A2 WHERE R.orig=A1.airportId AND R.dest=A2.airportId;',
+	'selectRoutes': '' +
+	'SELECT DISTINCT A1.airportCode AS orig, A2.airportCode AS dest \
+	FROM route R, airport A1, airport A2 \
+	WHERE R.orig=A1.airportId AND R.dest=A2.airportId; \
+	SELECT A1.airportCode AS orig, A2.airportCode AS dest \
+	FROM ( \
+	SELECT F.routeId, COUNT(*) AS total \
+	FROM flight F \
+	GROUP BY F.routeId \
+	ORDER BY total DESC \
+	LIMIT 20 \
+	) B, \
+	route R, \
+	airport A1, \
+	airport A2 \
+	WHERE A1.airportId = R.orig AND A2.airportId = R.dest AND B.routeId = R.routeId;',
 
 	'selectStats': '' +
 	'SELECT R.airTime, R.distance \
@@ -29,16 +44,32 @@ var sql = {
 		(SELECT Q.airlineId, ROUND(AVG(FD.duration)) AS avg FROM query Q, flight_delayed FD WHERE Q.flightId=FD.flightId GROUP BY Q.airlineId) D ON A.airlineId = D.airlineId LEFT OUTER JOIN \
 		airline Air ON A.airlineId = Air.airlineId \
 	ORDER BY A.tot DESC; \
+	SELECT Ontime AS type, tot FROM ( \
+	SELECT "Ontime", COUNT(*) AS tot \
+	FROM query Q \
+	WHERE NOT EXISTS (SELECT * FROM flight_delayed FD WHERE FD.flightId=Q.flightId) AND NOT EXISTS (SELECT * FROM flight_canceled FC WHERE FC.flightId=Q.flightId) \
+	UNION \
+	SELECT D.type, COUNT(*) AS tot \
+	FROM query Q, delay D, flight_delayed FD \
+	WHERE FD.flightId = Q.flightId AND D.delayId = FD.delayId \
+	GROUP BY D.type \
+	UNION \
+	SELECT "Canceled", count(*) AS tot \
+	FROM query Q \
+	WHERE EXISTS (SELECT * FROM flight_canceled FC WHERE FC.flightId=Q.flightId) \
+	) A; \
 	DROP VIEW IF EXISTS query;'
 
 }
 
 /* GET route page BEFORE user's choice */
 router.get('/', function(req, res) {
-	connection.query(sql.selectRoutes, function(err, route) {
+	connection.query(sql.selectRoutes, function(err, routes) {
+		console.log(routes[1])
 		res.render('index', {
 			title: 'By route',
-			routes: route
+			allroutes: routes[0],
+			toproutes: routes[1]
 		})
 	})
 })
@@ -55,12 +86,18 @@ router.get('/:id', function(req, res) {
 	connection.query(mysql.format(sql.selectStats, [orig, dest, orig, dest]), function(err, results) {
 		console.log(results[0])
 		console.log(results[2])
+		console.log(results[3])
 		timeDist = results[0]
 		airlineStats = results[2]
+		ontimeStats = []
+		results[3].forEach(function(item) {
+			ontimeStats.push([item.type, item.tot])
+		})
 		res.render('route', {
 			title: req.params.id,
 			timeDist: timeDist,
-			airlineStats: airlineStats
+			airlineStats: airlineStats,
+			ontimeStats: ontimeStats
 		})
 	})
 })

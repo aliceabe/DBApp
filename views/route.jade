@@ -1,5 +1,11 @@
 extends layout
 
+block script
+  script(type='text/javascript', src='/javascripts/route.js')
+  script()
+    | var local_data = !{JSON.stringify(ontimeStats)}
+    | var local_title = "#{title}"
+
 block content
   
   div.container(style="width: auto;")
@@ -14,7 +20,7 @@ block content
       div.col-md-4
         div.panel.panel-default
           div.panel-heading
-            h3.panel-title.b Average Flight Time
+            h3.panel-title Average Flight Time
           div.panel-body #{timeDist[0].airTime} minutes
 
       div.col-md-4
@@ -24,7 +30,7 @@ block content
           div.panel-body #{timeDist[0].distance} miles
 
     div.page-header
-      h4 Airlines operating this route
+      h4 Airlines operating on this route
 
     div.row
         table.table.table-striped
@@ -51,3 +57,4 @@ block content
     div.page-header
       h4 Causes of delays and cancellations
       
+    div(id="container", style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto")

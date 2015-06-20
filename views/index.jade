@@ -9,10 +9,22 @@ block content
 
     form.form-horizontal(method='post', role='form', enctype='application/json')
       div.form-group
-        label.col-sm-4 Select a route
+        label.col-sm-4 Select one of top 20 routes:
         div.col-sm-8
           select(name='route').form-control
-            each o in routes
+            each o in toproutes
+              option #{o.orig + '-' + o.dest}
+
+      div.form-group
+        div.col-sm-offset-4.col-sm-8
+          button.login.btn.btn-primary(type='submit') See statistics
+
+    form.form-horizontal(method='post', role='form', enctype='application/json')
+      div.form-group
+        label.col-sm-4 Or select one route among all routes:
+        div.col-sm-8
+          select(name='route').form-control
+            each o in allroutes
               option #{o.orig + '-' + o.dest}
 
       div.form-group
