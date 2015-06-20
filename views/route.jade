@@ -7,19 +7,25 @@ block content
     div.page-header
       h1= title
 
+    div.page-header
+      h4 Average time and distance
+
     div.row
       div.col-md-4
         div.panel.panel-default
           div.panel-heading
-            h2.panel-title.b Average Flight Time
+            h3.panel-title.b Average Flight Time
           div.panel-body #{timeDist[0].airTime} minutes
 
       div.col-md-4
         div.panel.panel-default
           div.panel-heading
-            h2.panel-title Average Distance
+            h3.panel-title Average Distance
           div.panel-body #{timeDist[0].distance} miles
-    
+
+    div.page-header
+      h4 Airlines operating this route
+
     div.row
         table.table.table-striped
           thead
@@ -42,3 +48,6 @@ block content
                 td #{airline.can_p + '%'}
                 td #{airline.avg + ' min'}
 
+    div.page-header
+      h4 Causes of delays and cancellations
+      
