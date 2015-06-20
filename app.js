@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
 
 var routes = require('./routes/byroute')
+var airlines = require('./airines/byairline')
 
 var app = express()
 
@@ -25,6 +26,11 @@ app.get('/', function(req, res) {
   res.redirect('/routes')
 })
 app.use('/routes', routes)
+
+app.get('/', function(req, res) {
+  res.redirect('/airlines')
+})
+app.use('/airlines', airlines)
 //app.use('/users', users)
 
 // catch 404 and forward to error handler
