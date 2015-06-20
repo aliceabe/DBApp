@@ -33,7 +33,6 @@ var sql = {
 
 }
 
-
 /* GET route page BEFORE user's choice */
 router.get('/', function(req, res) {
 	connection.query(sql.selectRoutes, function(err, route) {
