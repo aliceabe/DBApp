@@ -24,7 +24,7 @@ var sql = {
 /* GET airline page BEFORE user's choice */
 router.get('/', function(req, res) {
 	connection.query(sql.selectAirlines, function(err, airline) {
-		res.render('index', {
+		res.render('airlinechoice', {
 			title: 'By airline',
 			airlines: airline
 		})
