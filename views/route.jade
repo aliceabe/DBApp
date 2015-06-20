@@ -8,14 +8,37 @@ block content
       h1= title
 
     div.row
-      div.col-sm-4
+      div.col-md-4
         div.panel.panel-default
           div.panel-heading
-            h2.panel-title Average Flight Time
-          div.panel-body #{timeDist.airTime} minutes
+            h2.panel-title.b Average Flight Time
+          div.panel-body #{timeDist[0].airTime} minutes
 
-      div.col-sm-4
+      div.col-md-4
         div.panel.panel-default
           div.panel-heading
             h2.panel-title Average Distance
-          div.panel-body #{timeDist.distance} miles
+          div.panel-body #{timeDist[0].distance} miles
+    
+    div.row
+        table.table.table-striped
+          thead
+            tr
+              th Airline
+              th Nb of flights
+              th Nb of delayed
+              th Nb of canceled
+              th %Delayed
+              th %Canceled
+              th Avg delay
+          tbody
+            each airline in airlineStats
+              tr
+                td= airline.description
+                td= airline.tot
+                td= airline.del
+                td= airline.can
+                td #{airline.del_p + '%'}
+                td #{airline.can_p + '%'}
+                td #{airline.avg + ' min'}
+
