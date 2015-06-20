@@ -66,7 +66,7 @@ var sql = {
 router.get('/', function(req, res) {
 	connection.query(sql.selectRoutes, function(err, routes) {
 		console.log(routes[1])
-		res.render('index', {
+		res.render('routechoice', {
 			title: 'By route',
 			allroutes: routes[0],
 			toproutes: routes[1]
