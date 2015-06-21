@@ -25,8 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.get('/', function(req, res) {
   res.redirect('/routes')
 })
-app.use('/routes', routes)
-app.use('/airlines', airlines)
+//app.use('/routes', routes)
+app.use('/routes', airlines)
 //app.use('/airports', airports)
 //app.use('/users', users)
 

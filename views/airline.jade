@@ -1,0 +1,44 @@
+extends layout
+
+block script
+  script(type='text/javascript', src='/javascripts/delay_column_chart.js')
+  script()
+    | var local_data = !{JSON.stringify(delaystats)}
+    | var local_title = "#{title}"
+
+block content
+  
+  div.container(style="width: auto;")
+
+    div.page-header
+      h1= title
+
+    div.page-header
+      h4 Airline Performance
+
+    div.row
+        table.table.table-striped
+          thead
+            tr
+              th Airline
+              th No of flights
+              th No of delayed
+              th No of canceled
+              th %Delayed
+              th %Canceled
+              th Avg delay
+          tbody
+              tr
+                td #{title}
+                td= flightcount[0].noFlights1
+                td= delaycount[0].noDelays
+                td= cancelcount[0].noCancels
+                td #{perdelay[0].perdel + '%'}
+                td #{percancel[0].percan + '%'}
+                td #{avgdelay[0].avgDelay + 'minutes'}
+
+    div.page-header
+      h4 Delay breakdown
+    
+    div(id="container", style="min-width: 155px; height: 400px; max-width: 600px; margin: 0") 
+
