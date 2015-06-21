@@ -4,6 +4,7 @@ block script
   script(type='text/javascript', src='/javascripts/delay_column_chart.js')
   script()
     | var local_data = !{JSON.stringify(delaystats)}
+    | var local_data_cancel = !{JSON.stringify(cancelstats)}
     | var local_title = "#{title}"
 
 block content
@@ -11,7 +12,7 @@ block content
   div.container(style="width: auto;")
 
     div.page-header
-      h1= title
+      h1 Airline Code : #{title}
 
     div.page-header
       h4 Airline Performance
@@ -38,7 +39,12 @@ block content
                 td #{avgdelay[0].avgDelay + 'minutes'}
 
     div.page-header
-      h4 Delay breakdown
+      h4 Causes of Delay
     
-    div(id="container", style="min-width: 155px; height: 400px; max-width: 600px; margin: 0") 
+    div(id="container1", style="min-width: 155px; height: 400px; max-width: 600px; margin: 0") 
+
+    div.page-header
+      h4 Causes of Cancellations
+    
+    div(id="container2", style="min-width: 155px; height: 400px; max-width: 600px; margin: 0") 
 
