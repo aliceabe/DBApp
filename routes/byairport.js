@@ -30,7 +30,7 @@ var sql = {
 						(SELECT COUNT(*) AS cancelcount2 \
 						FROM airport A3, route R3, flight F3, flight_canceled FC3 \
 						WHERE (A3.airportId=R3.orig OR A3.airportId=R3.dest) AND R3.routeId=F3.routeId AND F3.flightId=FC3.flightId AND A3.airportCode=?) Temp2; \
-					SELECT IFNULL(AVG(FD4.duration),0) AS avgdelay \
+					SELECT IFNULL(ROUND(AVG(FD4.duration),0)) AS avgdelay \
 					FROM airport A4, route R4, flight F4, flight_delayed FD4 \
 					WHERE (A4.airportId=R4.orig OR A4.airportId=R4.dest) AND R4.routeId=F4.routeId AND F4.flightId=FD4.flightId AND A4.airportCode=?; \
 					SELECT D5.type AS name, IFNULL(COUNT(*),0) AS y \
