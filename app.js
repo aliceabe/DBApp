@@ -7,6 +7,7 @@ var bodyParser = require('body-parser')
 
 var routes = require('./routes/byroute')
 var airlines = require('./routes/byairline')
+var airport = require('./routes/byairport')
 
 var app = express()
 
@@ -25,9 +26,10 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.get('/', function(req, res) {
   res.redirect('/routes')
 })
+
 app.use('/routes', routes)
 app.use('/airlines', airlines)
-//app.use('/airports', airports)
+app.use('/airports', airport)
 //app.use('/users', users)
 
 // catch 404 and forward to error handler
