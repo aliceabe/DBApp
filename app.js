@@ -7,6 +7,7 @@ var bodyParser = require('body-parser')
 
 var routes = require('./routes/byroute')
 var airlines = require('./routes/byairline')
+var airport = require('./routes/byairport')
 
 var app = express()
 
@@ -26,7 +27,8 @@ app.get('/', function(req, res) {
   res.redirect('/routes')
 })
 //app.use('/routes', routes)
-app.use('/routes', airlines)
+//app.use('/routes', airlines)
+app.use('/routes', airport)
 //app.use('/airports', airports)
 //app.use('/users', users)
 
