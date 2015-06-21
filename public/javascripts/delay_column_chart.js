@@ -12,7 +12,7 @@ $(function () {
             categories: ['Carrier', 'Late Aircraft', 'NAS', 'Security', 'Weather']
         },
         tooltip: {
-            pointFormat: '{point.name}: <b>{point.y:.1f} mins</b>'
+            pointFormat: '{point.name}: <b>{point.y:.1f}</b>'
         },
         plotOptions: {
             column: {
@@ -39,6 +39,9 @@ $(function () {
         },
         title: {
             text: local_title
+        },
+        xAxis: {
+            categories: ['Carrier', 'NAS', 'Security', 'Weather']
         },
         tooltip: {
             pointFormat: '{point.name}: <b>{point.y:.1f} mins</b>'
