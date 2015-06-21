@@ -4,16 +4,24 @@ var connection = require('./connection')
 var router = express.Router()
 
 var sql = {
-	'selectAirlines' : 'SELECT DISTINCT A1.airlineCode AS airl FROM airline A1 ORDER BY airl;',
+
+	'selectAirlines' : '' +
+	'SELECT DISTINCT A1.airlineCode AS airl FROM airline A1 ORDER BY airl; \
+	SELECT A.airlineCode \
+	FROM flight F, airline A \
+	WHERE F.airlineId = A.airlineId \
+	GROUP BY F.airlineId \
+	ORDER BY COUNT(*) DESC \
+	LIMIT 20;',
 
 	'selectStats': '' +
-		'SELECT COUNT(F2.flightId) AS noFlights1 \
+		'SELECT COUNT(*) AS noFlights1 \
 		FROM flight F2, airline A2 \
 		WHERE F2.airlineId = A2.airlineId AND A2.airlineCode = ?; \
-		SELECT COUNT(DISTINCT FD3.delayId) AS noDelays \
+		SELECT COUNT(*) AS noDelays \
 		FROM flight_delayed FD3, flight F3, airline A3 \
 		WHERE F3.airlineId=A3.airlineId AND F3.flightId=FD3.flightId AND A3.airlineCode=?; \
-		SELECT COUNT(DISTINCT FC4.cancelId) AS noCancels\
+		SELECT COUNT(*) AS noCancels\
 		FROM flight_canceled FC4, flight F4, airline A4 \
 		WHERE F4.airlineId=A4.airlineId AND F4.flightId=FC4.flightId AND A4.airlineCode=?; \
 		SELECT IFNULL((Temp1.noofDelays/Temp2.noofFlights)/100, 0) AS perdel \
@@ -30,7 +38,7 @@ var sql = {
 		(SELECT COUNT(F2.flightId) AS noofFlights \
 		FROM flight F2, airline A2 \
 		WHERE F2.airlineId = A2.airlineId AND A2.airlineCode = ?) Temp2; \
-		SELECT IFNULL(AVG(FD3.duration),0) AS avgDelay \
+		SELECT ROUND(IFNULL(AVG(FD3.duration),0)) AS avgDelay \
 		FROM flight_delayed FD3, flight F3, airline A3 \
 		WHERE F3.airlineId=A3.airlineId AND F3.flightId=FD3.flightId AND A3.airlineCode=?; \
 		SELECT D5.type AS name, IFNULL(AVG(FD5.duration),0) AS y \
@@ -48,18 +56,18 @@ var sql = {
 router.get('/', function(req, res) {
 	connection.query(sql.selectAirlines, function(err, airlines) {
 		//console.log("hello world!!!")
-		//console.log(airlines)
 		res.render('airlinechoice', {
 			title: 'By airline',
 			//console.log(airline[0])
-			allairlines: airlines
+			allairlines: airlines[0],
+			topairlines: airlines[1]
 		})
 	})
 })
 
 /* POST user choice */
 router.post('/', function(req, res) {
-	res.redirect('/routes/' + req.body.airline)
+	res.redirect('/airlines/' + req.body.airline)
 })
 
 /* GET airline page AFTER user's choice */

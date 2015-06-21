@@ -34,9 +34,9 @@ block content
                 td= flightcount[0].noFlights1
                 td= delaycount[0].noDelays
                 td= cancelcount[0].noCancels
-                td #{perdelay[0].perdel + '%'}
-                td #{percancel[0].percan + '%'}
-                td #{avgdelay[0].avgDelay + 'minutes'}
+                td #{(100*delaycount[0].noDelays/flightcount[0].noFlights1).toFixed(2) + '%'}
+                td #{(100*cancelcount[0].noCancels/flightcount[0].noFlights1).toFixed(2) + '%'}
+                td #{avgdelay[0].avgDelay + ' minutes'}
 
     div.page-header
       h4 Causes of Delay

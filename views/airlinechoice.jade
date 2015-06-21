@@ -7,7 +7,19 @@ block content
     div.page-header
       h1 See statistics by airline
 
-     form.form-horizontal(method='post', role='form', enctype='application/json')
+    form.form-horizontal(method='post', role='form', enctype='application/json')
+      div.form-group
+        label.col-sm-4 Select one of the top airlines in terms of traffic:
+        div.col-sm-8
+          select(name='airline').form-control
+            each o in topairlines
+              option #{o.airlineCode.substring(0,2)}
+
+      div.form-group
+        div.col-sm-offset-4.col-sm-8
+          button.login.btn.btn-primary(type='submit') See statistics
+
+    form.form-horizontal(method='post', role='form', enctype='application/json')
       div.form-group
         label.col-sm-4 Select an airline of your choice:
         div.col-sm-8
