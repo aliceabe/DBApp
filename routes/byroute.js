@@ -25,8 +25,9 @@ var sql = {
 	'selectStats': '' +
 	'SELECT R.airTime, R.distance \
 	FROM route R, airport A1, airport A2 \
-	WHERE A1.airportId = R.orig AND A2.airportId = R.dest AND A1.airportCode = ? and A2.airportCode = ?; \
-	CREATE OR REPLACE VIEW query AS \
+	WHERE A1.airportId = R.orig AND A2.airportId = R.dest AND A1.airportCode = ? and A2.airportCode = ? \
+	; \
+	CREATE OR REPLACE VIEW tempview AS \
 	SELECT F.* \
 	FROM route R, airport A1, airport A2, flight F \
 	WHERE ( \
@@ -38,27 +39,34 @@ var sql = {
 	); \
 	SELECT Air.description, A.tot, IFNULL(B.del,0) AS del, IFNULL(C.can,0) AS can, IFNULL(ROUND(B.del*100/A.tot,1),0) AS del_p, IFNULL(ROUND(C.can*100/A.tot,1),0) AS can_p, IFNULL(D.avg,0) AS avg \
 	FROM \
-		(SELECT Q.airlineId, count(*) AS tot FROM query Q GROUP BY Q.airlineId) A LEFT OUTER JOIN \
-		(SELECT Q.airlineId, count(*) AS del FROM query Q WHERE EXISTS (SELECT * FROM flight_delayed FD WHERE FD.flightId=Q.flightId) GROUP BY Q.airlineId) B ON A.airlineId = B.airlineId LEFT OUTER JOIN \
-		(SELECT Q.airlineId, count(*) AS can FROM query Q WHERE EXISTS (SELECT * FROM flight_canceled FC WHERE FC.flightId=Q.flightId) GROUP BY Q.airlineId) C ON A.airlineId = C.airlineId LEFT OUTER JOIN \
-		(SELECT Q.airlineId, ROUND(AVG(FD.duration)) AS avg FROM query Q, flight_delayed FD WHERE Q.flightId=FD.flightId GROUP BY Q.airlineId) D ON A.airlineId = D.airlineId LEFT OUTER JOIN \
+		(SELECT Q.airlineId, count(*) AS tot FROM tempview Q GROUP BY Q.airlineId) A LEFT OUTER JOIN \
+		(SELECT Q.airlineId, count(*) AS del FROM tempview Q WHERE EXISTS (SELECT * FROM flight_delayed FD WHERE FD.flightId=Q.flightId) GROUP BY Q.airlineId) B ON A.airlineId = B.airlineId LEFT OUTER JOIN \
+		(SELECT Q.airlineId, count(*) AS can FROM tempview Q WHERE EXISTS (SELECT * FROM flight_canceled FC WHERE FC.flightId=Q.flightId) GROUP BY Q.airlineId) C ON A.airlineId = C.airlineId LEFT OUTER JOIN \
+		(SELECT Q.airlineId, ROUND(AVG(FD.duration)) AS avg FROM tempview Q, flight_delayed FD WHERE Q.flightId=FD.flightId GROUP BY Q.airlineId) D ON A.airlineId = D.airlineId LEFT OUTER JOIN \
 		airline Air ON A.airlineId = Air.airlineId \
-	ORDER BY A.tot DESC; \
-	SELECT Ontime AS type, tot FROM ( \
-	SELECT "Ontime", COUNT(*) AS tot \
-	FROM query Q \
-	WHERE NOT EXISTS (SELECT * FROM flight_delayed FD WHERE FD.flightId=Q.flightId) AND NOT EXISTS (SELECT * FROM flight_canceled FC WHERE FC.flightId=Q.flightId) \
-	UNION \
-	SELECT D.type, COUNT(*) AS tot \
-	FROM query Q, delay D, flight_delayed FD \
-	WHERE FD.flightId = Q.flightId AND D.delayId = FD.delayId \
-	GROUP BY D.type \
-	UNION \
-	SELECT "Canceled", count(*) AS tot \
-	FROM query Q \
-	WHERE EXISTS (SELECT * FROM flight_canceled FC WHERE FC.flightId=Q.flightId) \
-	) A; \
-	DROP VIEW IF EXISTS query;'
+	ORDER BY A.tot DESC \
+	; \
+	SELECT C.type, SUM(A.total) AS total \
+	FROM ( \
+	SELECT IFNULL(FD.delayId, "0") AS delayId, IFNULL(FC.cancelId, "0") AS cancelId, COUNT(*) AS total \
+	FROM tempview Q LEFT OUTER JOIN flight_delayed FD ON Q.flightId = FD.flightId \
+	LEFT OUTER JOIN flight_canceled FC ON Q.flightId = FC.flightId \
+	GROUP BY FD.delayId, FC.cancelId \
+	) A LEFT JOIN delaycancel C ON A.cancelId = C.cancelId AND A.delayId = C.delayId \
+	GROUP BY C.type \
+	ORDER BY total DESC \
+	; \
+	SELECT A.flightDate, C.type, SUM(A.total) AS total \
+	FROM ( \
+	SELECT EXTRACT(YEAR_MONTH FROM Q.flightDate) AS flightDate, IFNULL(FD.delayId, "0") AS delayId, IFNULL(FC.cancelId, "0") AS cancelId, COUNT(*) AS total \
+	FROM tempview Q LEFT OUTER JOIN flight_delayed FD ON Q.flightId = FD.flightId \
+	LEFT OUTER JOIN flight_canceled FC ON Q.flightId = FC.flightId \
+	GROUP BY EXTRACT(YEAR_MONTH FROM Q.flightDate), FD.delayId, FC.cancelId \
+	) A LEFT JOIN delaycancel C ON A.cancelId = C.cancelId AND A.delayId = C.delayId \
+	GROUP BY A.flightDate, C.type \
+	; \
+	DROP VIEW IF EXISTS tempview \
+	;'
 
 }
 
@@ -87,17 +95,38 @@ router.get('/:id', function(req, res) {
 		console.log(results[0])
 		console.log(results[2])
 		console.log(results[3])
+		console.log(results[4])
 		timeDist = results[0]
 		airlineStats = results[2]
 		ontimeStats = []
+		yearStats = []
+		tmp = {'Ontime': [], 'Weather delay': [], 'Carrier delay': [], 'Late aircraft delay': [], 'National Air System delay': [], 'Canceled': [], 'Total': []}
 		results[3].forEach(function(item) {
-			ontimeStats.push([item.type, item.tot])
+			ontimeStats.push([item.type, item.total])
 		})
+		results[4].forEach(function(item) {
+			tmp[item.type].push(item.total)
+		})
+		for (var i=0; i < 12; i++) {
+			tmp['Total'].push(tmp['Ontime'][i]+tmp['Weather delay'][i]+tmp['Carrier delay'][i]+tmp['Late aircraft delay'][i]+tmp['National Air System delay'][i]+tmp['Canceled'][i])
+		}
+		for (var i=0; i < 12; i++) {
+			tmp['Ontime'][i] = 100*(tmp['Ontime'][i] / tmp['Total'][i])
+			tmp['Weather delay'][i] = 100*(tmp['Weather delay'][i] / tmp['Total'][i])
+			tmp['Carrier delay'][i] = 100*(tmp['Carrier delay'][i] / tmp['Total'][i])
+			tmp['Late aircraft delay'][i] = 100*(tmp['Late aircraft delay'][i] / tmp['Total'][i])
+			tmp['National Air System delay'][i] = 100*(tmp['National Air System delay'][i] / tmp['Total'][i])
+			tmp['Canceled'][i] = 100*(tmp['Canceled'][i] / tmp['Total'][i])
+		}
+		for (var item in tmp) {
+			if (item != 'Total') {yearStats.push({'name': item, 'data': tmp[item]})}
+		}
 		res.render('route', {
 			title: req.params.id,
 			timeDist: timeDist,
 			airlineStats: airlineStats,
-			ontimeStats: ontimeStats
+			ontimeStats: ontimeStats,
+			yearStats: yearStats
 		})
 	})
 })

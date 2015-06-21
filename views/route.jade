@@ -3,7 +3,8 @@ extends layout
 block script
   script(type='text/javascript', src='/javascripts/route.js')
   script()
-    | var local_data = !{JSON.stringify(ontimeStats)}
+    | var local_data_pie = !{JSON.stringify(ontimeStats)}
+    | var local_data_line = !{JSON.stringify(yearStats)}
     | var local_title = "#{title}"
 
 block content
@@ -57,4 +58,9 @@ block content
     div.page-header
       h4 Causes of delays and cancellations
       
-    div(id="container", style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto")
+    div(id="container1", style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto")
+
+    div.page-header
+      h4 Delays and cancellations over the year
+
+    div(id="container2", style="min-width: 310px; height: 500px; max-width: 1000px; margin: 0 auto")
