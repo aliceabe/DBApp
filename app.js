@@ -27,6 +27,7 @@ app.get('/', function(req, res) {
 })
 app.use('/routes', routes)
 app.use('/airlines', airlines)
+//app.use('/airports', airports)
 //app.use('/users', users)
 
 // catch 404 and forward to error handler
