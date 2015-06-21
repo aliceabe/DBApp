@@ -25,27 +25,27 @@ var sql = {
 		FROM flight_canceled FC4, flight F4, airline A4 \
 		WHERE F4.airlineId=A4.airlineId AND F4.flightId=FC4.flightId AND A4.airlineCode=?; \
 		SELECT IFNULL((Temp1.noofDelays/Temp2.noofFlights)/100, 0) AS perdel \
-		FROM (SELECT COUNT(DISTINCT FD3.delayId) AS noofDelays \
-		FROM flight_delayed FD3, flight F3, airline A3 \
-		WHERE F3.airlineId=A3.airlineId AND F3.flightId=FD3.flightId AND A3.airlineCode=?) Temp1, \
-		(SELECT COUNT(F2.flightId) AS noofFlights \
-		FROM flight F2, airline A2 \
-		WHERE F2.airlineId = A2.airlineId AND A2.airlineCode=?) Temp2; \
+		FROM (SELECT COUNT(*) AS noofDelays \
+				FROM flight_delayed FD3, flight F3, airline A3 \
+				WHERE F3.airlineId=A3.airlineId AND F3.flightId=FD3.flightId AND A3.airlineCode=?) Temp1, \
+				(SELECT COUNT(F2.flightId) AS noofFlights \
+				FROM flight F2, airline A2 \
+				WHERE F2.airlineId = A2.airlineId AND A2.airlineCode=?) Temp2; \
 		SELECT IFNULL((Temp1.noofCancels/Temp2.noofFlights)/100, 0) AS percan \
-		FROM (SELECT COUNT(DISTINCT FC4.cancelId) AS noofCancels \
-		FROM flight_canceled FC4, flight F4, airline A4 \
-		WHERE F4.airlineId=A4.airlineId AND F4.flightId=FC4.flightId AND A4.airlineCode=?) Temp1, \
-		(SELECT COUNT(F2.flightId) AS noofFlights \
-		FROM flight F2, airline A2 \
-		WHERE F2.airlineId = A2.airlineId AND A2.airlineCode = ?) Temp2; \
+		FROM (SELECT COUNT(*) AS noofCancels \
+				FROM flight_canceled FC4, flight F4, airline A4 \
+				WHERE F4.airlineId=A4.airlineId AND F4.flightId=FC4.flightId AND A4.airlineCode=?) Temp1, \
+				(SELECT COUNT(F2.flightId) AS noofFlights \
+				FROM flight F2, airline A2 \
+				WHERE F2.airlineId = A2.airlineId AND A2.airlineCode = ?) Temp2; \
 		SELECT ROUND(IFNULL(AVG(FD3.duration),0)) AS avgDelay \
 		FROM flight_delayed FD3, flight F3, airline A3 \
 		WHERE F3.airlineId=A3.airlineId AND F3.flightId=FD3.flightId AND A3.airlineCode=?; \
-		SELECT D5.type AS name, IFNULL(AVG(FD5.duration),0) AS y \
+		SELECT D5.type AS name, IFNULL(COUNT(*),0) AS y \
 		FROM airline A5, flight F5, flight_delayed FD5, delay D5 \
 		WHERE F5.airlineId=A5.airlineId AND F5.flightId=FD5.flightId AND D5.delayId=FD5.delayId AND A5.airlineCode=? \
 		GROUP BY D5.type; \
-		SELECT C6.type AS name, IFNULL(COUNT(FC6.cancelId),0) AS y \
+		SELECT C6.type AS name, IFNULL(COUNT(*),0) AS y \
 		FROM airline A6, flight F6, flight_canceled FC6, cancel C6 \
 		WHERE F6.airlineId=A6.airlineId AND F6.flightId=FC6.flightId AND C6.cancelId=FC6.cancelId AND A6.airlineCode=? \
 		GROUP BY C6.type;'
