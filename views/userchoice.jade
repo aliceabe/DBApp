@@ -1,0 +1,73 @@
+extends layout
+
+block script
+  script(type="text/javascript")
+    | $(function () {$('#datetimepicker1').datetimepicker();});
+
+block content
+  
+  div.container(style="width: auto;")
+
+    div.page-header
+      h1 Help us!
+      h3 Rate an airline and report on flight fares you paid
+      p
+        | You have to
+        a(href="/account")  create an account
+        |  first if you don't have one.
+
+    form.form-horizontal(method='post', role='form', enctype='application/json')
+      div.form-group
+        label.col-sm-3.control-label Username
+        div.col-sm-9
+          input(name='username', placeholder='Your email address').form-control
+
+      div.form-group
+        label.col-sm-3.control-label Password
+        div.col-sm-9
+          input(name='password', placeholder='Password').form-control
+
+      div.form-group
+        label.col-sm-3.control-label Select the airline you took
+        div.col-sm-9
+          select(name='airline').form-control
+            each o in topairlines
+              option #{o.airlineCode.substring(0,2)}
+
+      div.form-group
+        label.col-sm-3.control-label Enter you origin-destination
+        div.col-sm-9
+          input(name='route', placeholder='For example: JFK-SFO, or LGA-BOS').form-control
+
+      div.form-group
+        label.col-sm-3.control-label Enter your flight date
+        div.col-sm-9
+          div.input-group
+            input(name='flightdate', placeholder='For example: 2014-05-01, or 2015-03-26').form-control
+            span.input-group-addon
+              span.glyphicon.glyphicon-calendar
+
+      div.form-group
+        label.col-sm-3.control-label Enter you flight departure time
+        div.col-sm-9
+          input(name='deptime', placeholder='For example: 1045, or 0615').form-control
+
+      div.form-group
+        label.col-sm-3.control-label Select the rate you want to give
+        div.col-sm-9
+          select(name='rating').form-control
+            each o in [5,4,3,2,1]
+              option= o
+      
+      div.form-group
+        label.col-sm-3.control-label Enter the total amount you paid
+        div.col-sm-9
+          div.input-group
+            div.input-group-addon $
+            input.form-control(type="text", name='amount', placeholder="Amount")
+
+      div.form-group
+        div.col-sm-offset-3.col-sm-9
+          button.login.btn.btn-primary(type='submit') Submit your rating
+
+      
