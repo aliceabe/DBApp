@@ -19,16 +19,29 @@ block content
 
     div.row
       div.col-md-4
-        div.panel.panel-default
+        div.panel.panel-primary
           div.panel-heading
             h3.panel-title Average Flight Time
-          div.panel-body #{timeDist[0].airTime} minutes
+          div.panel-body
+            strong #{timeDist[0].airTime} 
+            | minutes
 
       div.col-md-4
-        div.panel.panel-default
+        div.panel.panel-primary
           div.panel-heading
             h3.panel-title Average Distance
-          div.panel-body #{timeDist[0].distance} miles
+          div.panel-body
+            strong #{timeDist[0].distance} 
+            | miles
+
+      if price
+        div.col-md-4
+          div.panel.panel-primary
+            div.panel-heading
+              h3.panel-title Average Price
+            div.panel-body
+              | $
+              strong #{price}
 
     div.page-header
       h4 Airlines operating on this route
