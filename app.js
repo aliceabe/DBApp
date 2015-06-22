@@ -9,6 +9,7 @@ var routes = require('./routes/byroute')
 var airlines = require('./routes/byairline')
 var airport = require('./routes/byairport')
 var users = require('./routes/users')
+var account = require('./routes/account')
 
 var app = express()
 
@@ -32,6 +33,7 @@ app.use('/routes', routes)
 app.use('/airlines', airlines)
 app.use('/airports', airport)
 app.use('/users', users)
+app.use('/account', account)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -44,7 +44,8 @@ router.get('/', function(req, res) {
 		res.render('userchoice', {
 			title: 'User',
 			topairlines: topairlines,
-			incorrectflight: ''
+			incorrectflight: '',
+			wronguserpass: ''
 		})
 	})
 })
@@ -70,7 +71,7 @@ router.post('/', function(req, res) {
 				res.render('userchoice', {
 					title: 'Thank you',
 					topairlines: topairlines,
-					wronguserpass: false,
+					wronguserpass: '',
 					incorrectflight: incorrectflight
 				})
 			})
@@ -78,7 +79,7 @@ router.post('/', function(req, res) {
 			res.render('userchoice', {
 				title: 'Thank you',
 				topairlines: topairlines,
-				wronguserpass: true,
+				wronguserpass: 'yes',
 				incorrectflight: ''
 			})
 		}

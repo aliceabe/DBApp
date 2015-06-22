@@ -16,17 +16,23 @@ block content
         a(href="/account")  create an account
         |  first if you don't have one.
     
-    if wronguserpass
+    if wronguserpass=='yes'
       div.alert.alert-danger
-        span Oups! Your combination of username and password is incorrect
+        span
+          strong Oups! 
+          | Your combination of username and password is incorrect
 
     if incorrectflight=='yes'
       div.alert.alert-danger
-        span Oups! Your flight description doesn't match any existing flight
+        span
+          strong Oups! 
+          | Your flight description doesn't match any existing flight
 
     if incorrectflight=='no'
       div.alert.alert-success
-        span Thank you! Your feedback has been saved
+        span
+          strong Thank you! 
+          | Your feedback has been saved
 
     form.form-horizontal(method='post', role='form', enctype='application/json')
       div.form-group

@@ -1,0 +1,42 @@
+extends layout
+
+block content
+  
+  div.container(style="width: auto;")
+
+    div.page-header
+      h1 Create an account
+    
+    if wronguserpass=='yes'
+      div.alert.alert-danger
+        span
+          strong Oups! 
+          | Your username is already associated to an existing account
+
+    if wronguserpass=='no'
+      div.alert.alert-success
+        span
+          strong Thank you! 
+          | Your account has been saved
+
+    form.form-horizontal(method='post', role='form', enctype='application/json')
+      div.form-group
+        label.col-sm-3.control-label Name
+        div.col-sm-9
+          input.form-control(name='info', type="text", placeholder='Your name', required=true)
+
+      div.form-group
+        label.col-sm-3.control-label Username
+        div.col-sm-9
+          input.form-control(name='username', type="email", placeholder='Your email address', required=true)
+
+      div.form-group
+        label.col-sm-3.control-label Password
+        div.col-sm-9
+          input.form-control(name='password', type="password", placeholder='Password', required=true)
+
+      div.form-group
+        div.col-sm-offset-3.col-sm-9
+          button.login.btn.btn-primary(type='submit') Create an account
+
+      
