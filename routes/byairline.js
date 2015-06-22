@@ -48,7 +48,10 @@ var sql = {
 		SELECT C6.type AS name, IFNULL(COUNT(*),0) AS y \
 		FROM airline A6, flight F6, flight_canceled FC6, cancel C6 \
 		WHERE F6.airlineId=A6.airlineId AND F6.flightId=FC6.flightId AND C6.cancelId=FC6.cancelId AND A6.airlineCode=? \
-		GROUP BY C6.type;'
+		GROUP BY C6.type; \
+		SELECT AVG(R.rating) as rate \
+		FROM airline A, rating R \
+		WHERE A.airlineId=R.airlineId AND A.airlineCode=?;'
 }
 
 
@@ -73,10 +76,10 @@ router.post('/', function(req, res) {
 /* GET airline page AFTER user's choice */
 router.get('/:id', function(req, res) {
 	airlinecode = req.params.id
-	connection.query(mysql.format(sql.selectStats, [airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode]), function(err, results) {
+	connection.query(mysql.format(sql.selectStats, [airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode,airlinecode]), function(err, results) {
 		console.log("Naya zhamela")
-		console.log(airlinecode)
-		console.log(results[7])
+		//console.log(airlinecode)
+		console.log(results[8])
 
 	
 		res.render('airline', {
@@ -88,7 +91,8 @@ router.get('/:id', function(req, res) {
 			percancel: results[4],
 			avgdelay: results[5],
 			delaystats: results[6],
-			cancelstats: results[7]
+			cancelstats: results[7],
+			rating: results[8]
 		})
 	})
 })

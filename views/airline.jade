@@ -28,6 +28,7 @@ block content
               th %Delayed
               th %Canceled
               th Avg delay
+              th Rating
           tbody
               tr
                 td #{title}
@@ -37,6 +38,7 @@ block content
                 td #{(100*delaycount[0].noDelays/flightcount[0].noFlights1).toFixed(2) + '%'}
                 td #{(100*cancelcount[0].noCancels/flightcount[0].noFlights1).toFixed(2) + '%'}
                 td #{avgdelay[0].avgDelay + ' minutes'}
+                td= rating[0].rate
 
     div.page-header
       h4 Causes of Delay
