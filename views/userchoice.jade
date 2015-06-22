@@ -15,17 +15,29 @@ block content
         | You have to
         a(href="/account")  create an account
         |  first if you don't have one.
+    
+    if wronguserpass
+      div.alert.alert-danger
+        span Oups! Your combination of username and password is incorrect
+
+    if incorrectflight=='yes'
+      div.alert.alert-danger
+        span Oups! Your flight description doesn't match any existing flight
+
+    if incorrectflight=='no'
+      div.alert.alert-success
+        span Thank you! Your feedback has been saved
 
     form.form-horizontal(method='post', role='form', enctype='application/json')
       div.form-group
         label.col-sm-3.control-label Username
         div.col-sm-9
-          input(name='username', placeholder='Your email address').form-control
+          input.form-control(name='username', type="email", placeholder='Your email address', required=true)
 
       div.form-group
         label.col-sm-3.control-label Password
         div.col-sm-9
-          input(name='password', placeholder='Password').form-control
+          input.form-control(name='password', type="password", placeholder='Password', required=true)
 
       div.form-group
         label.col-sm-3.control-label Select the airline you took
@@ -37,20 +49,20 @@ block content
       div.form-group
         label.col-sm-3.control-label Enter you origin-destination
         div.col-sm-9
-          input(name='route', placeholder='For example: JFK-SFO, or LGA-BOS').form-control
+          input.form-control(name='route', placeholder='For example: JFK-SFO, or LGA-BOS', required=true)
 
       div.form-group
         label.col-sm-3.control-label Enter your flight date
         div.col-sm-9
           div.input-group
-            input(name='flightdate', placeholder='For example: 2014-05-01, or 2015-03-26').form-control
+            input.form-control(name='flightdate', type="datetime", placeholder='For example: 2014-05-01, or 2015-03-26', required=true)
             span.input-group-addon
               span.glyphicon.glyphicon-calendar
 
       div.form-group
         label.col-sm-3.control-label Enter you flight departure time
         div.col-sm-9
-          input(name='deptime', placeholder='For example: 1045, or 0615').form-control
+          input.form-control(name='deptime', placeholder='For example: 1045, or 0615', required=true)
 
       div.form-group
         label.col-sm-3.control-label Select the rate you want to give
@@ -64,7 +76,7 @@ block content
         div.col-sm-9
           div.input-group
             div.input-group-addon $
-            input.form-control(type="text", name='amount', placeholder="Amount")
+            input.form-control(type="number", name='amount', placeholder="Amount", required=true)
 
       div.form-group
         div.col-sm-offset-3.col-sm-9
